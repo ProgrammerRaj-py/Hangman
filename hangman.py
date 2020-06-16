@@ -1,70 +1,57 @@
-# importing Libraries
-import random as r
+# Importing Libraries
+import random
 
-# variables
-game_over = False
-char_guessed = 'aeiou'
-words = ['promote','intelligent','facebook','alphabate','objective','individual','successful','character','otherwise','mountain','beautiful','processor','instagram']
-word = r.choice(words)
-turns = 0
-
-# welcome prints
-user_name = input('Type Your name : ').title()
-print(f'\nWelcome {user_name}.\nLet\'s play Word Guessing game.')
-print('you have 6 chance to guess the word.\nIf you can guess the word then write it.\nOtherwise type any charachter.\nEvery guess -1 from your total guess.')
-
-print(f'\nThe word has {len(word)} characters.only vowles are already given.\nGood Luck !')
-
-
-# function 
-# ` for printing characters
-def loops():
-    for i in word:
+# function
+def hangman(winning_word,char_guessed):
+    for i in winning_word:
         if i in char_guessed:
-            print(i,end='')
+            print(f' {i} ' , end='')
         else:
-            print(' _ ',end='')
+            print(' __ ', end='')
+    print()
 
-#   for guess print
-def guess_left():
-    print(f'You have {6-turns} guess left.')
+def over(winning_word,char_guessed):
+    counts = 0
+    for i in set(winning_word):
+        if i in char_guessed:
+            counts += 1
+    return counts == len(set(winning_word))
 
-loops() # first call this for show the first word only with vowles.
 
-# real things
-while game_over != True:    
-    # checking user input duplicate or not
-    if turns == 6:
-        print(f'sorry no guesses left. The word is "{word}".')
-        break
+# Word
+words = ['promote','intelligent','facebook','alphabate','objective','individual','successful','character','otherwise','mountain','beautiful','processor','instagram']
+random.shuffle(words)
+winning_word = random.choice(words)
+char_guessed = ''
+
+
+# Welcome User
+user_name = input('Type your name : ').title()
+print(f"Welcome {user_name}. \nLet's play Word guessing game\nGuess the character one by one.")
+
+# main
+print(f'The word has {len(winning_word)} characters.\n')
+user_guess = input('Guess any character: ').lower()[0]
+
+
+while True:
     
-    user_guessed = input('\nGuess any character or the word : ').lower()
+    if user_guess in char_guessed:
+       user_guess = input('Already guessed.\nGuess again: ')
+
+    elif (user_guess in winning_word) and (user_guess not in char_guessed):
+        print(f'Correct guess. "{user_guess}" in the word.')
+        char_guessed += user_guess
+        hangman(winning_word,char_guessed)
+        game_over = over(winning_word,char_guessed)
+        if game_over:
+            print(f'\nCongrats. You guessed the Word "{winning_word.upper()}".')
+            break
+        else:
+            user_guess = input('Guess next character: ')
+
+    elif user_guess not in winning_word:
+        print(f'Wrong guess. "{user_guess}" not in the word.')
+        user_guess = input('Guess again: ')
     
-    if user_guessed == word:
-        print('Congrats you guessed the word.')
-        print(f'You guess the word in {turns} times')
-        game_over = True
     
-    elif user_guessed in char_guessed:
-        print('Already guesses.')
-        turns += 1
-        guess_left()
-        continue
-    
-    elif user_guessed not in word:
-        print('Character not in the word.')
-        turns += 1
-        guess_left()
-
-    else:
-        print(f'\nYes "{user_guessed}" is in the word.')
-        char_guessed += user_guessed
-        turns += 1
-        loops()
-        print()
-        guess_left()
-        
-
-
-
-
